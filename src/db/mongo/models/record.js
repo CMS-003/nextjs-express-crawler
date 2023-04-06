@@ -1,8 +1,9 @@
-import constant from '~/constant'
-import mongoose, { Schema } from 'mongoose';
-import { Static } from '..';
+const mongoose = require('mongoose')
+const constant = require('../../../constant')
+const Custom = require('../custom');
+const Schema = mongoose.Schema;
 
-export default function createRecord() {
+module.exports = function createRecord() {
   const schema = new Schema({
     _id: {
       type: String,
@@ -57,6 +58,6 @@ export default function createRecord() {
     strict: true,
     collections: 'record',
   });
-  schema.loadClass(Static);
+  schema.loadClass(Custom);
   return mongoose.model('record', schema);
 };

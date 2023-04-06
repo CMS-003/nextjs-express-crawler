@@ -1,8 +1,9 @@
-import constant from '~/constant'
-import mongoose, { Schema } from 'mongoose';
-import { Static } from '..';
+const mongoose = require('mongoose')
+const constant = require('../../../constant')
+const Custom = require('../custom');
+const Schema = mongoose.Schema;
 
-export default function createSegment() {
+module.exports = function createSegment() {
   const schema = new Schema({
     _id: {
       type: String,
@@ -36,6 +37,6 @@ export default function createSegment() {
     strict: true,
     collections: 'segment',
   });
-  schema.loadClass(Static);
+  schema.loadClass(Custom);
   return mongoose.model('segment', schema);
 };

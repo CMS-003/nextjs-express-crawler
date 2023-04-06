@@ -1,9 +1,10 @@
-import constant from '~/constant'
-import mongoose, { Schema } from 'mongoose';
-import { Static } from '..';
+const mongoose = require('mongoose')
+const constant = require('../../../constant')
+const Custom = require('../custom');
+const Schema = mongoose.Schema;
 
 // content内或封面用attachment.video、chapter、image分表
-export default function createAttachment() {
+module.exports = function createAttachment() {
   const schema = new Schema({
     _id: {
       type: String,
@@ -60,6 +61,6 @@ export default function createAttachment() {
     strict: true,
     collections: 'attachment',
   });
-  schema.loadClass(Static);
+  schema.loadClass(Custom);
   return mongoose.model('attachment', schema);
 };

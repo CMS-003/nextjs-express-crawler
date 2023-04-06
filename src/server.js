@@ -2,7 +2,8 @@ const express = require('express');
 const next = require('next');
 const parse = require('url').parse;
 const bodyParser = require('body-parser')
-
+const router = require('./router');
+const response = require('./middleware/response')
 
 const httpServer = (express) => {
   return require('http').createServer(express)
@@ -31,11 +32,10 @@ class Server {
   }
 
   initApis() {
+    this.express.use(response);
     this.express.use(bodyParser.json());
     this.express.use(bodyParser.urlencoded({ extended: false }))
-    this.express.use('/test', (req, res) => {
-      res.send({ code: 0 })
-    })
+    this.express.use('/api', router);
   }
 
   initCustomPages() {

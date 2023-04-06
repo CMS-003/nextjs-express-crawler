@@ -1,8 +1,9 @@
-import constant from '~/constant'
-import mongoose, { Schema } from 'mongoose';
-import { Static } from '..';
+const mongoose = require('mongoose')
+const constant = require('../../../constant')
+const Custom = require('../custom');
+const Schema = mongoose.Schema;
 
-export default function createRule() {
+module.exports = function createRule() {
   const schema = new Schema({
     _id: {
       type: String,
@@ -22,7 +23,7 @@ export default function createRule() {
       type: String,
       default: '',
     },
-    patterns: {
+    urls: {
       type: [String],
       comment: 'regpath格式',
     },
@@ -42,6 +43,6 @@ export default function createRule() {
     strict: true,
     collections: 'rule',
   });
-  schema.loadClass(Static);
+  schema.loadClass(Custom);
   return mongoose.model('rule', schema);
 };

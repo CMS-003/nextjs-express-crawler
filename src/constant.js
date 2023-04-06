@@ -1,6 +1,6 @@
 const root_path = process.cwd();
 
-export default {
+module.exports = {
   RECORD: {
     STATUS: {
       // 已创建
@@ -69,18 +69,14 @@ export default {
   'REQ_SEARCH': 'q',
   'REQ_ORDER': 'order',
   // 约定返回字段
-  'RES_SUCCESS': 'success',
-  'RES_FAIL': 'fail',
-  'RES_STATUS': 'status',
-  'RES_DATA': 'data',
   'RES_CODE': 'code',
+  'RES_DATA': 'data',
+  'RES_DESC': 'desc',
   'RES_MESSAGE': 'message',
   'RES_STACK': 'stack',
   // 约定分页字段
   'RES_PAGER': 'pager',
   'RES_PAGER_PAGE': 'page',
-  'RES_PAGER_PAGES': 'pages',
   'RES_PAGER_LIMIT': 'limit',
-  'RES_PAGER_COUNT': 'count',
   'RES_PAGER_TOTAL': 'total',
 }

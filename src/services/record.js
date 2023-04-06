@@ -1,4 +1,4 @@
-import models from 'src/db/mongo'
+import models from '~/db/mongo'
 
 export default {
   async getRecords(hql = {}) {

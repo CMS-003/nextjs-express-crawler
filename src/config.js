@@ -1,4 +1,4 @@
-export default {
+module.exports = {
   'PORT': '8099',
   'mongo': {
     'user': 'root',

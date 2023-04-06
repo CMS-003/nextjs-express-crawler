@@ -1,9 +1,10 @@
-import constant from '~/constant'
-import mongoose, { Schema } from 'mongoose';
-import { Static } from '..';
+const mongoose = require('mongoose')
+const constant = require('../../../constant')
+const Custom = require('../custom');
+const Schema = mongoose.Schema;
 
 // content内或封面用attachment.video、chapter、image分表
-export default function createVideo() {
+module.exports = function createVideo() {
   const schema = new Schema({
     _id: {
       type: String,
@@ -68,6 +69,6 @@ export default function createVideo() {
     strict: true,
     collections: 'video',
   });
-  schema.loadClass(Static);
+  schema.loadClass(Custom);
   return mongoose.model('video', schema);
 };
