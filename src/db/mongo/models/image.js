@@ -1,4 +1,4 @@
-import constant from 'src/constant';
+import constant from '~/constant'
 import mongoose, { Schema } from 'mongoose';
 import { Static } from '..';
 

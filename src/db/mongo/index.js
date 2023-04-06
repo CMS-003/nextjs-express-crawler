@@ -2,7 +2,7 @@ import mongoose from 'mongoose';
 import * as fs from 'fs';
 import * as path from 'path';
 import _ from 'lodash'
-import config from 'src/config'
+import config from '~/config'
 import createAttachment from './models/attachment';
 import createChapter from './models/chapter';
 import createImage from './models/image';

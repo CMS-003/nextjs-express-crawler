@@ -1,5 +1,5 @@
 import _ from 'lodash'
-import models from 'src/db/mongo'
+import models from '~/db/mongo'
 
 export default {
   async getRules(hql = {}) {

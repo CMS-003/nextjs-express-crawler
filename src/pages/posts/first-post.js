@@ -1,4 +1,4 @@
-import recordService from "src/services/record";
+import recordService from "services/record";
 
 export const getStaticProps = async (ctx) => {
   const result = await recordService.getRecords();
