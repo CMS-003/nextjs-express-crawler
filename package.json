@@ -4,7 +4,7 @@
     "dev": "NODE_ENV=development node index.js",
     "realtime": "NODE_ENV=development nodemon index.js --delay 5 --watch src",
     "build": "next build",
-    "start": "NODE_ENV=production node index.js"
+    "start": "NODE_ENV=production next start"
   },
   "dependencies": {
     "@ant-design/icons": "^5.0.1",

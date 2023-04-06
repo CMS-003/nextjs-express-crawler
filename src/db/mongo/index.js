@@ -3,6 +3,13 @@ const _ = require('lodash')
 const config = require('../../config')
 const fs = require('fs')
 const path = require('path')
+const createAttachment = require('./models/attachment')
+const createChapter = require('./models/chapter')
+const createImage = require('./models/image')
+const createRecord = require('./models/record')
+const createRule = require('./models/rule')
+const createSegment = require('./models/segment')
+const createVideo = require('./models/video')
 
 /**
  * 遍历文件夹
@@ -37,21 +44,21 @@ mongoose.connect(`mongodb://${config.mongo.user ? config.mongo.user + ':' + conf
 });
 
 if (!global.models) {
-  // const models = {
-  //   Attachment: createAttachment(),
-  //   Image: createImage(),
-  //   Chapter: createChapter(),
-  //   Rule: createRule(),
-  //   Record: createRecord(),
-  //   Segment: createSegment(),
-  //   Video: createVideo(),
-  // }
-  const models = {};
-  loader({ dir: __dirname + '/models' }, (info) => {
-    const { fullpath, filename } = info;
-    const name = filename[0].toUpperCase() + filename.substr(1);
-    models[name] = require(fullpath)();
-  })
+  const models = {
+    Attachment: createAttachment(),
+    Image: createImage(),
+    Chapter: createChapter(),
+    Rule: createRule(),
+    Record: createRecord(),
+    Segment: createSegment(),
+    Video: createVideo(),
+  }
+  // const models = {};
+  // loader({ dir: __dirname + '/models' }, (info) => {
+  //   const { fullpath, filename } = info;
+  //   const name = filename[0].toUpperCase() + filename.substr(1);
+  //   models[name] = require(fullpath)();
+  // })
   global.models = models;
 }
 
