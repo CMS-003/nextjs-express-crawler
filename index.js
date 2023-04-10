@@ -1,4 +1,4 @@
 import config from '~/config.js'
 import Server from '~/server.js'
 
-new Server(config.PORT).start();
+new Server(3000).start();

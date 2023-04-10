@@ -14,6 +14,7 @@
     "babel-plugin-superjson-next": "^0.4.5",
     "body-parser": "^1.20.2",
     "dotenv": "^16.0.3",
+    "esm-module-alias": "^2.0.3",
     "express": "^4.18.2",
     "lodash": "^4.17.21",
     "mobx": "^6.9.0",
@@ -26,7 +27,6 @@
     "superjson": "^1.12.2"
   },
   "devDependencies": {
-    "esm-module-alias": "^2.0.3",
     "nodemon": "^2.0.22"
   },
   "aliases": {
