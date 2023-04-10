@@ -1,11 +1,11 @@
 module.exports = {
-  'PORT': '8099',
+  'PORT': process.env.PORT,
   'mongo': {
-    'user': 'root',
-    'pass': '123456',
-    'host': '127.0.0.1',
-    'port': '27017',
-    'db': 'crawler',
+    'user': process.env.mongo_user,
+    'pass': process.env.mongo_pass,
+    'host': process.env.mongo_host,
+    'port': process.env.mongo_port,
+    'db': process.env.mongo_db,
   },
 
   // 跨域
