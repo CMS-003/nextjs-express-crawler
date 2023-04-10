@@ -1,4 +1,4 @@
-import shttp from '~/utils/shttp'
+import shttp from 'fe/utils/shttp'
 
 export function getRules(query) {
   return shttp.get('/rules', query)

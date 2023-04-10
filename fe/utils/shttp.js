@@ -2,7 +2,7 @@ import axios from 'axios';
 
 //基础URL，axios将会自动拼接在url前
 //process.env.NODE_ENV 判断是否为开发环境 根据不同环境使用不同的baseURL 方便调试
-let baseURL = process.env.NODE_ENV === 'development' ? 'http://localhost:3000/api' : '/api';
+let baseURL = process.env.NODE_ENV === 'development' ? '/api' : '/api';
 
 //默认请求超时时间
 const timeout = 10000;

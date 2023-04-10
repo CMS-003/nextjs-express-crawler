@@ -5,8 +5,8 @@ import { Button, Modal, Input, Form, Select, Radio, Space, Table, Tag, notificat
 import { EditTwoTone, DeleteTwoTone } from '@ant-design/icons'
 import ruleService from "~/services/rule";
 import { Observer, useLocalObservable, } from 'mobx-react-lite';
-import RuleEdit from "~/fe/modules/rule/edit";
-import apis from '~/fe/apis'
+import RuleEdit from "fe/modules/rule/edit";
+import apis from 'fe/apis'
 
 const Item = Form.Item;
 
