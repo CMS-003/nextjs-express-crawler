@@ -1,4 +1,3 @@
-import Link from "next/link";
 import _ from 'lodash'
 import React, { useState, useCallback } from 'react';
 import { Button, Modal, Input, Form, Select, Radio, Space, Table, Tag, notification, Popconfirm, Divider } from 'antd';
@@ -7,6 +6,7 @@ import ruleService from "~/services/rule";
 import { Observer, useLocalObservable, } from 'mobx-react-lite';
 import RuleEdit from "fe/modules/rule/edit";
 import apis from 'fe/apis'
+import { Wrap } from 'fe/component'
 
 const Item = Form.Item;
 
@@ -101,11 +101,12 @@ export default function RulePage(props) {
     },
   ]
   return <Observer>{() => (<div>
-    <Space align="end">
-      <Button type="primary" onClick={() => getRules()}>查询</Button>
-      <Button type="primary" onClick={() => { local.tempData = {}; setIsModalOpen(true) }}>添加</Button>
-    </Space>
-
+    <Wrap size="middle">
+      <Space size={"small"}>
+        <Button type="primary" onClick={() => getRules()}>查询</Button>
+        <Button type="primary" onClick={() => { local.tempData = {}; setIsModalOpen(true) }}>添加</Button>
+      </Space>
+    </Wrap>
     {isModalOpen && <RuleEdit cancel={() => setIsModalOpen(false)} data={local.tempData} save={async (data) => {
       const result = local.tempData._id ? await apis.updateRule(local.tempData._id, data) : await apis.createRule(data)
       if (result.code === 0) {
