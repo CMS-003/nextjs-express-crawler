@@ -1,14 +1,22 @@
 import _ from 'lodash'
-import React, { useState, useCallback } from 'react';
-import { Button, Modal, Input, Form, Select, Radio, Space, Table, Tag, notification, Popconfirm, Divider } from 'antd';
-import { EditTwoTone, DeleteTwoTone } from '@ant-design/icons'
+import React, { useState, useCallback, useRef } from 'react';
+import { useEffectOnce } from 'react-use';
+import { Button, Space, Table, notification, Popconfirm, Modal, Select, Input, Form, } from 'antd';
+import { EditTwoTone, DeleteTwoTone, RocketTwoTone, ReloadOutlined } from '@ant-design/icons'
 import ruleService from "~/services/rule";
 import { Observer, useLocalObservable, } from 'mobx-react-lite';
 import RuleEdit from "fe/modules/rule/edit";
 import apis from 'fe/apis'
-import { Wrap } from 'fe/component'
+import { Wrap } from '@/component'
+import { match } from 'path-to-regexp'
+import { parse } from 'url'
 
-const Item = Form.Item;
+const RuleStatus = {
+  0: { text: '开发中', color: 'blue' },
+  1: { text: "使用中", color: 'green' },
+  2: { text: "已废弃", color: "red" },
+  3: { text: "待上线", color: "#cad100" },
+}
 
 export const getStaticProps = async (ctx) => {
   const result = await ruleService.getRules();
@@ -23,13 +31,25 @@ export const getStaticProps = async (ctx) => {
 
 export default function RulePage(props) {
   const { rules, total } = props;
+  const [isChrome, setIsCrome] = useState(false);
   const local = useLocalObservable(() => ({
     tempData: {},
     rules,
     page: 1,
     limit: 20,
+    matchURL: {
+      open: false,
+      loading: false,
+      url: '',
+      matched_rule_id: '',
+      params: null,
+      isComposition: false,
+    }
   }))
   const [isModalOpen, setIsModalOpen] = useState(false);
+  useEffectOnce(() => {
+    setIsCrome(window.navigator.userAgent.includes('Chrome'))
+  })
   const editData = useCallback(async (data) => {
     local.tempData = data;
     setIsModalOpen(true);
@@ -40,6 +60,54 @@ export default function RulePage(props) {
       local.rules = result.data.items;
     } else {
       notification.error({ message: '获取数据失败' })
+    }
+  })
+  function openMatch() {
+    local.matchURL.matched_rule_id = '';
+    local.matchURL.url = '';
+    local.matchURL.open = true;
+    local.matchURL.isComposition = false;
+    local.matchURL.params = null;
+  }
+  function closeMatch() {
+    local.matchURL.params = null;
+    local.matchURL.open = false;
+  }
+  const onCrawl = useCallback(async () => {
+    local.matchURL.loading = true
+    try {
+      const result = await apis.patchRule(local.matchURL.matched_rule_id, { url: local.matchURL.url, params: local.matchURL.params })
+      console.log(result)
+      local.matchURL.open = false
+    } catch (e) {
+
+    } finally {
+      local.matchURL.loading = false;
+    }
+  })
+  const matchUrl = useCallback((link) => {
+    const uri = parse(link)
+    let found = null;
+    const origin = `${uri.protocol}//${uri.host}`;
+    for (let i = 0; i < local.rules.length; i++) {
+      const rule = local.rules[i];
+      for (let j = 0; j < rule.urls.length; j++) {
+        const url = rule.urls[j];
+        const path = parse(url).pathname
+        if (url.startsWith(origin)) {
+          const fn = match(path, { decode: decodeURIComponent })
+          const result = fn(uri.pathname)
+          if (result) {
+            found = result.params;
+            local.matchURL.matched_rule_id = rule._id;
+            local.matchURL.params = result.params
+            break;
+          }
+        }
+      }
+      if (found) {
+        break;
+      }
     }
   })
   const columns = [
@@ -57,6 +125,7 @@ export default function RulePage(props) {
       title: '状态',
       dataIndex: 'status',
       key: '_id',
+      render: (status) => <span style={{ color: RuleStatus[status].color }} >{RuleStatus[status].text}</span>
     },
     {
       title: '匹配规则',
@@ -103,8 +172,11 @@ export default function RulePage(props) {
   return <Observer>{() => (<div>
     <Wrap size="middle">
       <Space size={"small"}>
-        <Button type="primary" onClick={() => getRules()}>查询</Button>
         <Button type="primary" onClick={() => { local.tempData = {}; setIsModalOpen(true) }}>添加</Button>
+        <Button type='primary' icon={<RocketTwoTone twoToneColor="#fe584e" />} onClick={openMatch}>抓取</Button>
+        <Button type="primary">
+          <ReloadOutlined onClick={() => getRules()} color="#blue" />
+        </Button>
       </Space>
     </Wrap>
     {isModalOpen && <RuleEdit cancel={() => setIsModalOpen(false)} data={local.tempData} save={async (data) => {
@@ -116,6 +188,48 @@ export default function RulePage(props) {
         notification.warning({ message: result.message })
       }
     }} />}
-    <Table columns={columns} dataSource={local.rules} rowKey="_id" pagination={{ position: ['bottomRight'] }} />
-  </div>)}</Observer>;
+    <Table columns={columns} dataSource={local.rules} rowKey="_id" />
+    <Modal
+      open={local.matchURL.open}
+      footer={<Space>
+        <Button onClick={closeMatch}>取消</Button>
+        <Button
+          loading={local.matchURL.loading}
+          type="primary"
+          disabled={local.matchURL.matched_rule_id === ''}
+          onClick={onCrawl}
+        >抓取</Button>
+      </Space>}
+      onCancel={closeMatch}
+    >
+      <Form>
+        <Form.Item label="规则" labelCol={{ span: 4 }} style={{ marginTop: 24 }} >
+          <Select disabled value={local.matchURL.matched_rule_id}>
+            <Select.Option value="">无</Select.Option>
+            {local.rules.map(rule => (<Select.Option key={rule._id} value={rule._id}>{rule.name}</Select.Option>))}
+          </Select>
+        </Form.Item>
+        <Form.Item label="地址" labelCol={{ span: 4 }}>
+          {local.matchURL.open && <Input
+            onPaste={(e) => {
+              matchUrl(e.target.value)
+            }}
+            onChange={(e) => {
+              if (!local.matchURL.isComposition) {
+                matchUrl(e.target.value)
+              }
+            }}
+            onCompositionStart={() => {
+              local.matchURL.isComposition = true
+            }}
+            onCompositionEnd={(e) => {
+              local.matchURL.isComposition = false
+              matchUrl(e.target.value)
+            }} />}
+
+        </Form.Item>
+      </Form>
+    </Modal>
+  </div>)
+  }</Observer >;
 }

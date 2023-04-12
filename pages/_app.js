@@ -1,11 +1,17 @@
 import React from 'react';
 import App, { Container } from "next/app";;
+import Link from "next/link"
 import { Layout, Menu, theme } from 'antd';
-import { UploadOutlined, UserOutlined, VideoCameraOutlined } from '@ant-design/icons';
+import { HistoryOutlined, BugOutlined, TrademarkOutlined } from '@ant-design/icons';
 import "antd/dist/reset.css";
 import "fe/styles/globals.css"
 
 const { Header, Content, Footer, Sider } = Layout;
+const MenuItems = [
+  { name: 'records', title: '记录', icon: <HistoryOutlined size={32} />, path: '/records' },
+  { name: 'rules', title: '规则', icon: <BugOutlined />, path: '/rules' },
+  { name: 'resources', title: '资源', icon: <TrademarkOutlined />, path: '/resources' }
+]
 
 function SelfLayout({ children }) {
   const {
@@ -27,11 +33,11 @@ function SelfLayout({ children }) {
         theme="dark"
         mode="inline"
         defaultSelectedKeys={['4']}
-        items={[UserOutlined, VideoCameraOutlined, UploadOutlined, UserOutlined].map(
-          (icon, index) => ({
-            key: String(index + 1),
-            icon: React.createElement(icon),
-            label: `nav ${index + 1}`,
+        items={MenuItems.map(
+          (item, index) => ({
+            key: item.name,
+            icon: item.icon,
+            label: <Link target="_self" href={item.path}>{item.title}</Link>,
           }),
         )}
       />
@@ -46,15 +52,10 @@ function SelfLayout({ children }) {
   </Layout>)
 }
 
-class Crawler extends App {
-
-  render() {
-    let { Component } = this.props;
-    return (
-      <SelfLayout>
-        <Component />
-      </SelfLayout>
-    );
-  }
+export default function MyApp({ Component, pageProps }) {
+  return (
+    <SelfLayout>
+      <Component {...pageProps} />
+    </SelfLayout>
+  )
 }
-export default Crawler;

@@ -9,7 +9,7 @@ const Item = Form.Item;
 export default function RuleEdit({ data, cancel, save }) {
   const local = useLocalStore(() => ({
     editORadd: data._id ? 'edit' : 'add',
-    data: data._id ? _.cloneDeep(data) : { type: 'single', tags: [], types: [], poster: '', urls: [], open: false, status: 0 },
+    data: data._id ? _.cloneDeep(data) : { type: 'single', proxy: 0, mode: 'request', poster: '', urls: [], open: false, status: 0 },
     loading: false,
     ref: '',
     poster: data.poster || '',
@@ -43,27 +43,36 @@ export default function RuleEdit({ data, cancel, save }) {
           <Input value={local.data.title} autoFocus onChange={e => local.data.title = e.target.value} defaultValue={local.data.name} />
         </Item>
         <Item label="描述:" labelCol={{ span: 4 }} defaultValue={local.data.desc}>
-          <Input />
+          <Input.TextArea />
         </Item>
-        <Item>
-          <Item label="规则类型:" labelCol={{ span: 4 }}>
-            <Select defaultValue={local.data.type} onChange={v => {
-              local.data.type = v;
-            }}>
-              <Select.Option key="single" value="single">单页</Select.Option>
-              <Select.Option key="pagination" value="pagination">单页</Select.Option>
-            </Select>
-          </Item>
-          <Item label="状态:" labelCol={{ span: 4 }}>
-            <Radio.Group name="status" defaultValue={local.data.status} onChange={e => {
-              local.data.status = e.target.value;
-            }}>
-              <Radio value={0}>已创建</Radio>
-              <Radio value={1}>运行中</Radio>
-              <Radio value={2}>已废弃</Radio>
-              <Radio value={3}>等待中</Radio>
-            </Radio.Group>
-          </Item>
+        <Item label="规则类型:" labelCol={{ span: 4 }}>
+          <Radio.Group name="type" defaultValue={"single"} onChange={e => local.data.type = e.target.value}>
+            <Radio value={"single"}>单页</Radio>
+            <Radio value={"pagination"}>分页</Radio>
+          </Radio.Group>
+        </Item>
+        <Item label="模式" labelCol={{ span: 4 }}>
+          <Radio.Group name="mode" defaultValue={"request"} onChange={e => local.data.mode = e.target.value}>
+            <Radio value={'browser'}>browser</Radio>
+            <Radio value={"puppeteer"}>puppeteer</Radio>
+            <Radio value={"request"}>request</Radio>
+          </Radio.Group>
+        </Item>
+        <Item label="代理" labelCol={{ span: 4 }}>
+          <Radio.Group name="proxy" defaultValue={0} onChange={e => local.data.proxy = e.target.value}>
+            <Radio value={0}>无</Radio>
+            <Radio value={1}>有</Radio>
+          </Radio.Group>
+        </Item>
+        <Item label="状态:" labelCol={{ span: 4 }}>
+          <Radio.Group name="status" defaultValue={local.data.status} onChange={e => {
+            local.data.status = e.target.value;
+          }}>
+            <Radio value={0}>已创建</Radio>
+            <Radio value={1}>运行中</Radio>
+            <Radio value={2}>已废弃</Radio>
+            <Radio value={3}>等待中</Radio>
+          </Radio.Group>
         </Item>
         <Item label="匹配规则:" labelCol={{ span: 4 }}>
           <Space direction='vertical'>

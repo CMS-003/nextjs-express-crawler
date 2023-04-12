@@ -8,7 +8,7 @@ export default {
     return { total, items };
   },
   async createRule(data) {
-    data = _.pick(data, ['type', 'name', 'desc', 'script', 'matches', 'status', '_id'])
+    data = _.pick(data, ['type', 'mode', 'proxy', 'name', 'desc', 'script', 'urls', 'status', '_id'])
     try {
       new VMScript(data.script).compile();
     } catch (e) {

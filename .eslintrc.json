@@ -1,0 +1,23 @@
+{
+  "env": {
+    "node": true
+  },
+  "parser": "@babel/eslint-parser",
+  "parserOptions": {
+    "ecmaVersion": "latest",
+    "requireConfigFile": false
+  },
+  "extends": [
+    "eslint:recommended",
+    "prettier"
+  ],
+  "rules": {
+    "semi": [
+      "error",
+      "always"
+    ],
+    "quotes": "off",
+    "no-console": "off",
+    "no-redeclare": "warn"
+  }
+}

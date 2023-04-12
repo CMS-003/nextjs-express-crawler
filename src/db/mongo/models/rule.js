@@ -15,6 +15,16 @@ export default function createRule() {
       default: '',
       comment: 'single,page',
     },
+    mode: {
+      type: String,
+      enum: ['browser', 'pupeeter', 'request'],
+      comment: 'nas用不了代理,只能浏览器处理.一般都可以服务器里request',
+      default: 'fetch'
+    },
+    proxy: {
+      type: Number,
+      default: 0
+    },
     resource_type: String,
     name: {
       type: String,

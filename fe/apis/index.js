@@ -1,7 +1,9 @@
-import { getRules, createRule, destroyRule, updateRule } from './rule'
+import { getRules, createRule, destroyRule, updateRule, patchRule } from './rule'
 
 export default {
   getRules,
   createRule,
-  destroyRule, updateRule,
+  destroyRule,
+  updateRule,
+  patchRule,
 }

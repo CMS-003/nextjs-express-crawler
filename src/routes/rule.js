@@ -1,4 +1,5 @@
 import { Router } from 'express';
+import constant from '~/constant';
 import models from '~/db/mongo/index.js'
 
 const router = Router();
@@ -22,6 +23,15 @@ router.delete('/:id', async (req, res) => {
 router.put('/:id', async (req, res) => {
   await models.Rule.updateOne({ _id: req.params.id }, { $set: req.body });
   res.success();
+})
+
+router.patch('/:id', async (req, res) => {
+  const rule = await models.Rule.findOne({ _id: req.params.id }).lean(true);
+  if (rule.status !== constant.RULE.STATUS.RUNNING) {
+    res.fail({ message: 'rule未完成!' })
+  } else {
+    res.success()
+  }
 })
 
 export default router;

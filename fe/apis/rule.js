@@ -12,3 +12,6 @@ export function destroyRule(data) {
 export function updateRule(_id, data) {
   return shttp.put(`/rules/${_id}`, data)
 }
+export function patchRule(_id, data) {
+  return shttp.patch(`/rules/${_id}`, data)
+}
