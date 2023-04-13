@@ -1,5 +1,5 @@
 import _ from 'lodash'
-import React, { useState, useCallback, useRef } from 'react';
+import React, { useState, useCallback, } from 'react';
 import { useEffectOnce } from 'react-use';
 import { Button, Space, Table, notification, Popconfirm, Modal, Select, Input, Form, } from 'antd';
 import { EditTwoTone, DeleteTwoTone, RocketTwoTone, ReloadOutlined } from '@ant-design/icons'
@@ -32,6 +32,7 @@ export const getStaticProps = async (ctx) => {
 export default function RulePage(props) {
   const { rules, total } = props;
   const [isChrome, setIsCrome] = useState(false);
+  const [form] = Form.useForm()
   const local = useLocalObservable(() => ({
     tempData: {},
     rules,
@@ -71,6 +72,7 @@ export default function RulePage(props) {
   }
   function closeMatch() {
     local.matchURL.params = null;
+    form.setFieldValue('url', '')
     local.matchURL.open = false;
   }
   const onCrawl = useCallback(async () => {
@@ -202,15 +204,15 @@ export default function RulePage(props) {
       </Space>}
       onCancel={closeMatch}
     >
-      <Form>
-        <Form.Item label="规则" labelCol={{ span: 4 }} style={{ marginTop: 24 }} >
+      <Form form={form}>
+        <Form.Item label="规则" labelCol={{ span: 2 }} style={{ marginTop: 32 }} >
           <Select disabled value={local.matchURL.matched_rule_id}>
             <Select.Option value="">无</Select.Option>
             {local.rules.map(rule => (<Select.Option key={rule._id} value={rule._id}>{rule.name}</Select.Option>))}
           </Select>
         </Form.Item>
-        <Form.Item label="地址" labelCol={{ span: 4 }}>
-          {local.matchURL.open && <Input
+        <Form.Item label="地址" labelCol={{ span: 2 }} name="url">
+          <Input
             onPaste={(e) => {
               matchUrl(e.target.value)
             }}
@@ -225,8 +227,7 @@ export default function RulePage(props) {
             onCompositionEnd={(e) => {
               local.matchURL.isComposition = false
               matchUrl(e.target.value)
-            }} />}
-
+            }} />
         </Form.Item>
       </Form>
     </Modal>

@@ -1,8 +1,14 @@
 import _ from 'lodash'
 import React, { useState, useRef } from 'react';
-import { Button, Modal, Input, Form, Select, Radio, notification, Space } from 'antd';
+import { Button, Modal, Input, Form, Select, Radio, notification, Space, } from 'antd';
 import { CheckCircleTwoTone, CloseCircleTwoTone } from '@ant-design/icons'
 import { Observer, useLocalStore } from 'mobx-react-lite';
+import CodeEditor from '@/modules/code-editor'
+
+// const CodeEditor = dynamic(() =>
+//   import('@/modules/editor'),
+//   { loading: <p>加载中...</p> }
+// )
 
 const Item = Form.Item;
 
@@ -23,7 +29,9 @@ export default function RuleEdit({ data, cancel, save }) {
   }))
   const urlRef = useRef(null)
   return <Observer>{() => (<div>
-    <Modal title={local.editORadd === 'add' ? '添加' : "修改"}
+    <Modal
+      width={750}
+      title={local.editORadd === 'add' ? '添加' : "修改"}
       open={true}
       okText={local.editORadd === 'add' ? '添加' : "修改"}
       cancelText="取消"
@@ -36,7 +44,7 @@ export default function RuleEdit({ data, cancel, save }) {
         cancel();
       }}>
       <Form>
-        <Item label="唯一标志:" labelCol={{ span: 4 }}>
+        <Item label="id:" labelCol={{ span: 4 }}>
           <Input disabled={local.editORadd === 'edit'} onChange={e => local.data._id = e.target.value} defaultValue={local.data._id} />
         </Item>
         <Item label="名称:" labelCol={{ span: 4 }}>
@@ -45,7 +53,7 @@ export default function RuleEdit({ data, cancel, save }) {
         <Item label="描述:" labelCol={{ span: 4 }} defaultValue={local.data.desc}>
           <Input.TextArea />
         </Item>
-        <Item label="规则类型:" labelCol={{ span: 4 }}>
+        <Item label="类型:" labelCol={{ span: 4 }}>
           <Radio.Group name="type" defaultValue={"single"} onChange={e => local.data.type = e.target.value}>
             <Radio value={"single"}>单页</Radio>
             <Radio value={"pagination"}>分页</Radio>
@@ -64,7 +72,7 @@ export default function RuleEdit({ data, cancel, save }) {
             <Radio value={1}>有</Radio>
           </Radio.Group>
         </Item>
-        <Item label="状态:" labelCol={{ span: 4 }}>
+        <Item label="状态" labelCol={{ span: 4 }}>
           <Radio.Group name="status" defaultValue={local.data.status} onChange={e => {
             local.data.status = e.target.value;
           }}>
@@ -74,8 +82,8 @@ export default function RuleEdit({ data, cancel, save }) {
             <Radio value={3}>等待中</Radio>
           </Radio.Group>
         </Item>
-        <Item label="匹配规则:" labelCol={{ span: 4 }}>
-          <Space direction='vertical'>
+        <Item label="规则" labelCol={{ span: 4 }}>
+          <Space direction='vertical' style={{ width: '100%' }}>
             {local.data.urls.length === 0 && <label style={{ lineHeight: '32px' }}>暂无数据</label>}
             {local.data.urls.map((url, i) => <Input key={i} value={url} readOnly addonAfter={<CloseCircleTwoTone onClick={() => {
               local.data.urls.splice(i, 1)
@@ -91,6 +99,9 @@ export default function RuleEdit({ data, cancel, save }) {
               }
             }} />} />
           </Space>
+        </Item>
+        <Item>
+          <CodeEditor style={{ height: 400, overflow: 'auto' }} value={local.data.script} onChange={v => local.data.script = v} />
         </Item>
       </Form>
     </Modal>

@@ -1,8 +1,10 @@
 import { Router } from 'express';
-import constant from '~/constant';
 import models from '~/db/mongo/index.js'
-
+import { VMScript } from 'vm2'
+import helper
+  from '../utils/helper';
 const router = Router();
+const spiders = {};
 
 router.post('/', async (req, res) => {
   const result = await models.Rule.create(req.body);
@@ -26,11 +28,29 @@ router.put('/:id', async (req, res) => {
 })
 
 router.patch('/:id', async (req, res) => {
-  const rule = await models.Rule.findOne({ _id: req.params.id }).lean(true);
-  if (rule.status !== constant.RULE.STATUS.RUNNING) {
-    res.fail({ message: 'rule未完成!' })
+  const rule = await models.Rule.findOne({ _id: req.params.id });
+  const url = req.query.origin, preview = req.query.preview ? true : false;
+  if (!rule) {
+    res.fail('no rule');
   } else {
-    res.success()
+    let script = spiders[rule._id]
+    if (script === undefined) {
+      script = new VMScript(rule.script || '').compile();
+      spiders[rule._id] = script;
+    }
+    if (!script) {
+      return res.fail("脚本错误");
+    }
+    const fn = vm.run(script);
+    if (typeof fn !== 'function') {
+      return res.fail('脚本不是函数');
+    }
+    try {
+      const data = await fn.apply({ models, helper }, rule, url, preview)
+      res.success(data);
+    } catch (e) {
+      res.fail(`抓取失败: ${e.message}`);
+    }
   }
 })
 
