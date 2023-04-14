@@ -74,6 +74,7 @@ export default {
   'RES_DESC': 'desc',
   'RES_MESSAGE': 'message',
   'RES_STACK': 'stack',
+  'RES_FAIL': -1,
   // 约定分页字段
   'RES_PAGER': 'pager',
   'RES_PAGER_PAGE': 'page',

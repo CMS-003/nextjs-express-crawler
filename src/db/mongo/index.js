@@ -4,6 +4,12 @@ import path from 'path'
 import mongoose from 'mongoose'
 import config from '~/config.js'
 import createRule from './models/rule.js'
+import createRecord from './models/record.js'
+import createAttachment from './models/attachment.js'
+import createChapter from './models/chapter.js'
+import createImage from './models/image.js'
+import createSegment from './models/segment.js'
+import createVideo from './models/video.js'
 
 /**
  * 遍历文件夹
@@ -40,6 +46,12 @@ mongoose.connect(`mongodb://${config.mongo.user ? config.mongo.user + ':' + conf
 if (!global.models) {
   global.models = {
     Rule: createRule(),
+    Attachment: createAttachment(),
+    Chapter: createChapter(),
+    Image: createImage(),
+    Record: createRecord(),
+    Segment: createSegment(),
+    Video: createVideo(),
   }
 }
 

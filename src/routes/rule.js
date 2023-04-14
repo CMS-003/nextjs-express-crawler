@@ -1,8 +1,9 @@
 import { Router } from 'express';
 import models from '~/db/mongo/index.js'
-import { VMScript } from 'vm2'
-import helper
-  from '../utils/helper';
+import { VM, NodeVM, VMScript } from 'vm2'
+import helper from '~/utils/helper.js';
+import constant from '~/constant.js';
+
 const router = Router();
 const spiders = {};
 
@@ -29,27 +30,41 @@ router.put('/:id', async (req, res) => {
 
 router.patch('/:id', async (req, res) => {
   const rule = await models.Rule.findOne({ _id: req.params.id });
-  const url = req.query.origin, preview = req.query.preview ? true : false;
+  const url = req.body.url, preview = req.query.preview ? true : false;
   if (!rule) {
-    res.fail('no rule');
+    res.fail({ message: 'no rule' });
   } else {
     let script = spiders[rule._id]
     if (script === undefined) {
-      script = new VMScript(rule.script || '').compile();
-      spiders[rule._id] = script;
+      const code = process.env.NODE_ENV === 'development' ? helper.readTxt(constant.ROOT_PATH + '/spiders/' + rule._id + '.js') : rule.script || '';
+      script = new VMScript(code).compile();
+      // spiders[rule._id] = script;
     }
     if (!script) {
-      return res.fail("脚本错误");
+      return res.fail({ message: "脚本错误" });
     }
-    const fn = vm.run(script);
+    const fn = new NodeVM({
+      console: 'inherit',
+      require: {
+        external: true,
+        builtin: ['*']
+      }
+    }).run(script, {});
     if (typeof fn !== 'function') {
-      return res.fail('脚本不是函数');
+      return res.fail({ message: '脚本不是函数' });
     }
     try {
-      const data = await fn.apply({ models, helper }, rule, url, preview)
+      const data = await fn({ 
+        constant,
+        models, 
+        helper, 
+        rule, 
+        url, 
+        preview })
       res.success(data);
     } catch (e) {
-      res.fail(`抓取失败: ${e.message}`);
+      console.log(e);
+      res.fail({ message: `抓取失败: ${e.message}` });
     }
   }
 })

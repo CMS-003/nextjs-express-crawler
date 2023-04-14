@@ -1,7 +1,7 @@
-const fs = require('fs');
-const path = require('path');
-const mkdirp = require('mkdirp');
-const crypto = require('crypto');
+import fs from 'fs'
+import path from 'path'
+import { mkdirp } from 'mkdirp';
+import crypto from 'crypto'
 
 export default {
   /**

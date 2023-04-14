@@ -3,7 +3,7 @@ import http from 'http'
 import constant from '~/constant.js'
 
 const {
-  RES_DESC, RES_DATA, RES_CODE, RES_MESSAGE,
+  RES_DESC, RES_DATA, RES_CODE, RES_MESSAGE, RES_FAIL,
   RES_PAGER, RES_PAGER_LIMIT, RES_PAGER_PAGE, RES_PAGER_TOTAL
 } = constant;
 
@@ -30,7 +30,7 @@ const extend = {
    */
   fail({ message, code = -1 }) {
     this.json({
-      [RES_DESC]: CFG.RES_FAIL,
+      [RES_DESC]: RES_FAIL,
       [RES_CODE]: code,
       [RES_MESSAGE]: message,
     })

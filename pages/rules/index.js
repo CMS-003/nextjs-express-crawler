@@ -79,7 +79,7 @@ export default function RulePage(props) {
     local.matchURL.loading = true
     try {
       const result = await apis.patchRule(local.matchURL.matched_rule_id, { url: local.matchURL.url, params: local.matchURL.params })
-      console.log(result)
+      form.setFieldValue('url', '')
       local.matchURL.open = false
     } catch (e) {
 
@@ -101,6 +101,7 @@ export default function RulePage(props) {
           const result = fn(uri.pathname)
           if (result) {
             found = result.params;
+            local.matchURL.url = link;
             local.matchURL.matched_rule_id = rule._id;
             local.matchURL.params = result.params
             break;

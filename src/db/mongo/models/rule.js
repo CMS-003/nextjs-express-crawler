@@ -8,7 +8,7 @@ export default function createRule() {
   const schema = new Schema({
     _id: {
       type: String,
-      comment: 'shortid'
+      comment: '标识id'
     },
     type: {
       type: String,
