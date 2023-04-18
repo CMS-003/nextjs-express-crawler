@@ -56,6 +56,9 @@ export default function createRecord() {
       type: Number, // 0 下线 1 上线
       default: 0,
     },
+    new: {
+      type: Object
+    }
   }, {
     strict: true,
     collections: 'record',

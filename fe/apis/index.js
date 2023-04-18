@@ -1,4 +1,5 @@
 import { getRules, createRule, destroyRule, updateRule, patchRule } from './rule'
+import { getRecords } from './record'
 
 export default {
   getRules,
@@ -6,4 +7,6 @@ export default {
   destroyRule,
   updateRule,
   patchRule,
+
+  getRecords,
 }

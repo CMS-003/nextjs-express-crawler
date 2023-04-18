@@ -2,9 +2,9 @@ import _ from 'lodash'
 import React, { useState, useCallback, } from 'react';
 import { useEffectOnce } from 'react-use';
 import { Button, Space, Table, notification, Popconfirm, Modal, Select, Input, Form, } from 'antd';
-import { EditTwoTone, DeleteTwoTone, RocketTwoTone, ReloadOutlined } from '@ant-design/icons'
 import ruleService from "~/services/rule";
 import { Observer, useLocalObservable, } from 'mobx-react-lite';
+import { AiTwotoneEdit, AiTwotoneDelete, AiTwotoneRocket, AiOutlineReload } from 'react-icons/ai'
 import RuleEdit from "fe/modules/rule/edit";
 import apis from 'fe/apis'
 import { Wrap } from '@/component'
@@ -50,19 +50,22 @@ export default function RulePage(props) {
   const [isModalOpen, setIsModalOpen] = useState(false);
   useEffectOnce(() => {
     setIsCrome(window.navigator.userAgent.includes('Chrome'))
+    return () => {
+
+    }
   })
-  const editData = useCallback(async (data) => {
+  const editData = async (data) => {
     local.tempData = data;
     setIsModalOpen(true);
-  })
-  const getRules = useCallback(async () => {
+  }
+  const getRules = async () => {
     const result = await apis.getRules({ page: local.page, limit: local.limit })
     if (result.code === 0) {
       local.rules = result.data.items;
     } else {
       notification.error({ message: '获取数据失败' })
     }
-  })
+  }
   function openMatch() {
     local.matchURL.matched_rule_id = '';
     local.matchURL.url = '';
@@ -75,7 +78,7 @@ export default function RulePage(props) {
     form.setFieldValue('url', '')
     local.matchURL.open = false;
   }
-  const onCrawl = useCallback(async () => {
+  const onCrawl = async () => {
     local.matchURL.loading = true
     try {
       const result = await apis.patchRule(local.matchURL.matched_rule_id, { url: local.matchURL.url, params: local.matchURL.params })
@@ -86,8 +89,8 @@ export default function RulePage(props) {
     } finally {
       local.matchURL.loading = false;
     }
-  })
-  const matchUrl = useCallback((link) => {
+  }
+  const matchUrl = (link) => {
     const uri = parse(link)
     let found = null;
     const origin = `${uri.protocol}//${uri.host}`;
@@ -112,7 +115,7 @@ export default function RulePage(props) {
         break;
       }
     }
-  })
+  }
   const columns = [
     {
       title: '名称',
@@ -149,7 +152,7 @@ export default function RulePage(props) {
       key: '_id',
       render: (_, record) => (
         <Space size="middle">
-          <EditTwoTone onClick={() => {
+          <AiTwotoneEdit onClick={() => {
             editData(record);
           }} />
           <Popconfirm
@@ -166,7 +169,7 @@ export default function RulePage(props) {
             okText="确认"
             cancelText="取消"
           >
-            <DeleteTwoTone />
+            <AiTwotoneDelete />
           </Popconfirm>
         </Space>
       ),
@@ -176,9 +179,9 @@ export default function RulePage(props) {
     <Wrap size="middle">
       <Space size={"small"}>
         <Button type="primary" onClick={() => { local.tempData = {}; setIsModalOpen(true) }}>添加</Button>
-        <Button type='primary' icon={<RocketTwoTone twoToneColor="#fe584e" />} onClick={openMatch}>抓取</Button>
+        <Button type='primary' onClick={openMatch}>抓取</Button>
         <Button type="primary">
-          <ReloadOutlined onClick={() => getRules()} color="#blue" />
+          <AiOutlineReload onClick={() => getRules()} color="#blue" />
         </Button>
       </Space>
     </Wrap>

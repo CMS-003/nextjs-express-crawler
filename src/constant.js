@@ -13,6 +13,8 @@ export default {
       ERRORED: 4,
       // 已停止
       STOPPED: 5,
+      // 废弃
+      DISCARD: 6,
     },
     UPDATE_STATUS: {
       UPDATING: 1,

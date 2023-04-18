@@ -1,22 +1,27 @@
 import React from 'react';
-import App, { Container } from "next/app";;
-import Link from "next/link"
+import { useRouter } from 'next/router'
 import { Layout, Menu, theme } from 'antd';
-import { HistoryOutlined, BugOutlined, TrademarkOutlined } from '@ant-design/icons';
+import { Observer, useLocalObservable, } from 'mobx-react-lite';
+import { AiOutlineHistory, AiOutlineBug, AiOutlineTrademark } from 'react-icons/ai'
 import "antd/dist/reset.css";
 import "fe/styles/globals.css"
 
 const { Header, Content, Footer, Sider } = Layout;
 const MenuItems = [
-  { name: 'records', title: '记录', icon: <HistoryOutlined size={32} />, path: '/records' },
-  { name: 'rules', title: '规则', icon: <BugOutlined />, path: '/rules' },
-  { name: 'resources', title: '资源', icon: <TrademarkOutlined />, path: '/resources' }
+  { name: '/records', title: '记录', icon: <AiOutlineHistory />, path: '/records' },
+  { name: '/rules', title: '规则', icon: <AiOutlineBug />, path: '/rules' },
+  { name: '/resources', title: '资源', icon: <AiOutlineTrademark />, path: '/resources' }
 ]
 
 function SelfLayout({ children }) {
   const {
     token: { colorBgContainer },
   } = theme.useToken();
+  const router = useRouter()
+
+  const local = useLocalObservable(() => ({
+    currentKey: router.pathname
+  }));
   return (<Layout style={{ height: '100%' }}>
     <Sider
       breakpoint="lg"
@@ -29,18 +34,26 @@ function SelfLayout({ children }) {
       }}
     >
       <div className="logo" />
-      <Menu
-        theme="dark"
-        mode="inline"
-        defaultSelectedKeys={['4']}
-        items={MenuItems.map(
-          (item, index) => ({
-            key: item.name,
-            icon: item.icon,
-            label: <Link target="_self" href={item.path}>{item.title}</Link>,
-          }),
-        )}
-      />
+      <Observer>{() => (
+        <Menu
+          theme="dark"
+          mode="inline"
+          selectedKeys={[local.currentKey]}
+          onSelect={({ item, key, keyPath, selectedKeys, }) => {
+            local.currentKey = key;
+          }}
+          items={MenuItems.map(
+            (item, index) => ({
+              key: item.name,
+              icon: item.icon,
+              label: <span onClick={() => {
+                local.currentKey = item.name;
+                router.push(item.path)
+              }}>{item.title}</span>,
+            }),
+          )}
+        />
+      )}</Observer>
     </Sider>
     <Layout>
       <Header style={{ padding: 0, background: colorBgContainer }} />
